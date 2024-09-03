@@ -1,0 +1,15 @@
+{
+  "name": "create-next-xpres",
+  "version": "1.0.7",
+  "description": "Create a Next.js project with an Express server.",
+  "main": "index.js",
+  "bin": {
+    "create-next-express": "./bin/create-next-xpres.js"
+  },
+  "dependencies": {
+    "inquirer": "^8.2.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
