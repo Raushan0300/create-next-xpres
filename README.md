@@ -79,11 +79,11 @@ MIT License
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request on GitHub.
+Contributions are welcome! Please open an issue or submit a pull request on [GitHub](https://github.com/Raushan0300/create-next-xpres).
 
 ## Author
 
-Raushan Kumar
+[Raushan Kumar](https://raushan.xyz)
 
 ## Acknowledgments
 
