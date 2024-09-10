@@ -1,6 +1,6 @@
 {
   "name": "create-next-xpres",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Create a Next.js project with an Express server.",
   "main": "index.js",
   "bin": {

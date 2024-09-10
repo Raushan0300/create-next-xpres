@@ -78,7 +78,7 @@ nextApp.prepare().then(() => {
 
 // add your API routes here
 app.get('/api', (req, res) => {
-  res.send('Hello from Express!\nBuilt with 'create-next-xpres'');
+  res.send('Hello from Express! Built with \`create-next-xpres\`');
 });
 
 app.listen(PORT, () => {
@@ -112,12 +112,13 @@ module.exports = mongoose;
 
       // Step 5: Create package.json in the root folder
       const packageJsonContent = {
-        name: projectName !== "." ? projectName : path.basename(process.cwd()),
+        name: (projectName !== "." ? projectName : path.basename(process.cwd())).toLowerCase(),
         version: "1.0.0",
         main: "index.js",
         scripts: {
-          start: "cd client && npm run build && cd .. && node index.js",
-          dev: `nodemon index.js`,
+          start: "node index.js",
+          build: "cd client && npm install && npm run build && rm -rf node_modules && cd ..",
+          dev: "nodemon index.js"
         },
         dependencies: {
           express: "^4.18.2",
