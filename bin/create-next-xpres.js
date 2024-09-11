@@ -117,7 +117,7 @@ module.exports = mongoose;
         main: "index.js",
         scripts: {
           start: "node index.js",
-          build: "cd client && npm install && npm run build && rm -rf node_modules && cd ..",
+          build: "nexpres build",
           dev: "nodemon index.js"
         },
         dependencies: {
@@ -184,6 +184,7 @@ node_modules
 
         console.log("Tailwind CSS and PostCSS initialized in the root folder.");
       }
+      execSync("npm install nexpres", { stdio: "inherit" });
       const readmeContent = `
 # Project Name
 
