@@ -185,6 +185,7 @@ node_modules
         console.log("Tailwind CSS and PostCSS initialized in the root folder.");
       }
       execSync("npm install nexpres", { stdio: "inherit" });
+      execSync("cd client && rm -rf .git && cd..", { stdio: "inherit" });
       const readmeContent = `
 # Project Name
 
