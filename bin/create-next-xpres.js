@@ -116,9 +116,9 @@ module.exports = mongoose;
         version: "1.0.0",
         main: "index.js",
         scripts: {
-          start: "node index.js",
+          start: "nexpres start",
           build: "nexpres build",
-          dev: "nodemon index.js"
+          dev: "nexpres dev",
         },
         dependencies: {
           express: "^4.18.2",
