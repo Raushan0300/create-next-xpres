@@ -3,49 +3,13 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const inquirer = require("inquirer");
 
-// Step 1: Prompt the user for the project name and whether to use Tailwind CSS
-inquirer
-  .prompt([
-    {
-      type: "input",
-      name: "projectName",
-      message: "Enter the name of your project:",
-      default: "next-xpres-app",
-    },
-    {
-      type: "confirm",
-      name: "useTailwind",
-      message: "Do you want to use Tailwind CSS?",
-      default: false,
-    },
-  ])
-  .then((answers) => {
-    let { projectName, useTailwind } = answers;
+try {
+  // console.log("Running:", createNextAppCommand);
+  execSync("npx create-next-app@latest", { stdio: "inherit" });
 
-    // Step 2: Handle project directory based on user input
-    let projectPath = process.cwd();
-
-    if (projectName !== ".") {
-      projectPath = path.join(process.cwd(), projectName);
-      if (!fs.existsSync(projectPath)) {
-        fs.mkdirSync(projectPath);
-      }
-      process.chdir(projectPath); // Change directory to the new project folder
-    }
-
-    // Step 3: Run npx create-next-app with the provided project name
-    const createNextAppCommand = useTailwind
-      ? `npx create-next-app@latest client --tailwind`
-      : `npx create-next-app@latest client`;
-
-    try {
-      console.log("Running:", createNextAppCommand);
-      execSync(createNextAppCommand, { stdio: "inherit" });
-
-      // Step 4: Create index.js in the root folder with Express server setup
-      const indexJsContent = `
+  // Step 4: Create index.js in the root folder with Express server setup
+  const serverJsContent = `
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -54,7 +18,7 @@ const next = require('next');
 dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
-const nextApp = next({dev, dir:'./client'});
+const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
 const app = express();
@@ -86,12 +50,12 @@ app.listen(PORT, () => {
 });
 `;
 
-      fs.writeFileSync(
-        path.join(process.cwd(), "index.js"),
-        indexJsContent.trim()
-      );
+  fs.writeFileSync(
+    path.join(process.cwd(), "server.js"),
+    serverJsContent.trim()
+  );
 
-      const connenctionJSContent = `
+  const connenctionJSContent = `
 const mongoose = require('mongoose');
 
 const Mongo_URI = process.env.MONGO_URI;
@@ -105,88 +69,35 @@ mongoose.connect(Mongo_URI).then(()=>{
 module.exports = mongoose;
 `;
 
-      fs.writeFileSync(
-        path.join(process.cwd(), "connection.js"),
-        connenctionJSContent.trim()
-      );
+  fs.writeFileSync(
+    path.join(process.cwd(), "connection.js"),
+    connenctionJSContent.trim()
+  );
 
-      // Step 5: Create package.json in the root folder
-      const packageJsonContent = {
-        name: (projectName !== "." ? projectName : path.basename(process.cwd())).toLowerCase(),
-        version: "1.0.0",
-        main: "index.js",
-        scripts: {
-          start: "nexpres start",
-          build: "nexpres build",
-          dev: "nexpres dev",
-        },
-        dependencies: {
-          express: "^4.18.2",
-          cors: "^2.8.5",
-          dotenv: "^16.4.5",
-          mongoose: "^8.5.3",
-          next: "^14.2.7",
-        },
-        devDependencies: {
-          autoprefixer: "^10.4.20",
-          postcss: "^8.4.41",
-          tailwindcss: "^3.4.10",
-        },
-      };
+  // Step 5: Create package.json in the root folder
+  const packageJsonPath = path.join(process.cwd(), "package.json");
+  const packageJsonContent = JSON.parse(
+    fs.readFileSync(packageJsonPath, "utf8")
+  );
 
-      fs.writeFileSync(
-        path.join(process.cwd(), "package.json"),
-        JSON.stringify(packageJsonContent, null, 2)
-      );
+  // Update the dev and start commands
+  packageJsonContent.scripts.start = "node server.js";
+  packageJsonContent.scripts.dev = "nodemon server.js";
 
-      const tailwindConfigContent = `
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./client/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./client/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./client/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+  // Write the updated package.json back to the file
+  fs.writeFileSync(
+    packageJsonPath,
+    JSON.stringify(packageJsonContent, null, 2)
+  );
 
-`;
-
-      const envContent = `
+  const envContent = `
 MONGO_URI=mongodb://localhost:27017/${projectName}
 NODE_ENV=development
 `;
 
-      fs.writeFileSync(path.join(process.cwd(), ".env"), envContent.trim());
+  fs.writeFileSync(path.join(process.cwd(), ".env"), envContent.trim());
 
-      const gitignoreContent = `
-node_modules
-.env
-`;
-
-      fs.writeFileSync(path.join(process.cwd(), ".gitignore"), gitignoreContent);
-
-      // Step 6: If Tailwind CSS is selected, initialize Tailwind and PostCSS in root
-      if (useTailwind) {
-        console.log("Initializing Tailwind CSS and PostCSS in root...");
-        execSync("npm install tailwindcss postcss autoprefixer", {
-          stdio: "inherit",
-        });
-        execSync("npx tailwindcss init -p", { stdio: "inherit" });
-
-        fs.writeFileSync(
-          path.join(process.cwd(), "tailwind.config.js"),
-          tailwindConfigContent.trim()
-        );
-
-        console.log("Tailwind CSS and PostCSS initialized in the root folder.");
-      }
-      execSync("npm install nexpres", { stdio: "inherit" });
-      execSync("cd client && rm -rf .git && cd..", { stdio: "inherit" });
-      const readmeContent = `
+  const readmeContent = `
 # Project Name
 
 This project was generated using \`create-next-xpres\`, a CLI tool that sets up a Next.js frontend and an Express backend with optional Tailwind CSS for styling.
@@ -280,15 +191,11 @@ This project is licensed under the MIT License.
 - [Tailwind CSS](https://tailwindcss.com/) (if applicable)
 
 `;
-      fs.writeFileSync(path.join(process.cwd(), "README.md"), readmeContent);
-      
-      execSync("npm install", { stdio: "inherit" });
+  fs.writeFileSync(path.join(process.cwd(), "README.md"), readmeContent);
 
-      console.log("Express server setup completed.");
-    } catch (error) {
-      console.error("Error during setup:", error);
-    }
-  })
-  .catch((error) => {
-    console.error("Error during prompt:", error);
-  });
+  execSync("npm install express dotenv mongoose cors", { stdio: "inherit" });
+
+  console.log("Express server setup completed.");
+} catch (error) {
+  console.error("Error during setup:", error);
+}

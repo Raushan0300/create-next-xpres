@@ -1,11 +1,12 @@
 # create-next-xpres
 
+# Version 2.0 (Major Changes)
+
 `create-next-xpres` is a CLI tool that helps you quickly set up a Next.js project integrated with an Express server. It simplifies the process of creating a full-stack JavaScript application by combining Next.js for the frontend, Express for the backend and MongoDB for Database preconfigured, with optional Tailwind CSS for styling.
 
 ## Features
 
-- **Automatic Project Setup**: Automatically creates a Next.js app in a `client` folder and an Express server in the root directory.
-- **Custom Project Name**: Allows you to specify the project name, or use the current directory if `.` is entered.
+- **Automatic Project Setup**: Automatically creates a Next.js app and an Express Server in a `root` directory.
 - **Tailwind CSS Support**: Optionally includes Tailwind CSS setup during the Next.js project creation.
 - **Express Server**: Includes a basic Express server setup with routing, ready for customization.
 
@@ -39,7 +40,7 @@ npx create-next-xpres@latest
 
    ```plaintext
    your-project-name/
-   ├── client/            # Next.js app
+   ├── nextjs_app         # Next.js app
    ├── index.js           # Express server
    ├── connection.js      # MongoDB Connection with Mongoose
    ├── package.json       # Root package.json with Express dependencies
